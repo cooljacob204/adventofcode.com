@@ -99,4 +99,4 @@ SPACECRAFT_MODULES = [
   91345,
   120164,
   80904
-]
+].freeze
