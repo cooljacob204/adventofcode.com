@@ -9,7 +9,7 @@ class MassCalcuator
     total_fuel = 0
 
     @modules.each do |mass|
-      total_fuel += calculate_module_fuel(mass)
+      total_fuel += calculate_fuel(mass)
     end
 
     total_fuel
@@ -17,12 +17,12 @@ class MassCalcuator
 
   protected
 
-  def calculate_module_fuel(mass)
+  def calculate_fuel(mass)
     fuel_needed = (mass / 3.0).floor - 2
 
-    return 0 if fuel_needed < 0
+    return 0 if fuel_needed <= 0
 
-    fuel_needed
+    fuel_needed + calculate_fuel(fuel_needed)
   end
 end
 
