@@ -58,18 +58,22 @@ class CrossedWires
       x = line1[0][0]
       y = line2[1][1]
 
-      min = [line2[0][0], line2[1][0]].min
-      max = [line2[0][0], line2[1][0]].max
+      min_x = [line2[0][0], line2[1][0]].min
+      max_x = [line2[0][0], line2[1][0]].max
+      min_y = [line1[0][1], line1[1][1]].min
+      max_y = [line1[0][1], line1[1][1]].max
 
-      return [x, y] if min <= x && x <= max
-    elsif line2[0][0] == line2[1][0]
+      return [x, y] if min_x <= x && x <= max_x && min_y <= y && y <= max_y
+    elsif line2[0][0] == line2[0][1]
       y = line1[0][1]
       x = line2[1][0]
 
-      min = [line2[0][1], line2[1][1]].min
-      max = [line2[0][1], line2[1][1]].max
+      min_x = [line2[0][0], line2[1][0]].min
+      max_x = [line2[0][0], line2[1][0]].max
+      min_y = [line2[0][1], line2[1][1]].min
+      max_y = [line2[0][1], line2[1][1]].max
 
-      return [x, y] if min <= y && y <= max
+      return [x, y] if min_x <= x && x <= max_x && min_y <= y && y <= max_y
     end
 
     nil
