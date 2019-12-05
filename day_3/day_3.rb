@@ -1,121 +1,63 @@
 require './day_3/input.rb'
 
 class CrossedWires
-  attr_reader :wires
+  class << self
+    def intersections(wire1, wire2)
+      intersections = []
 
-  def initialize(wires)
-    @wires = parse_wires(wires)
-  end
+      wire1_hash = hash_wire(wire1)
+      wire2_hash = hash_wire(wire2)
 
-  def intersections 
-    intersections = []
+      wire2_hash.keys.each do |move|
+        intersections << move if wire1_hash[move]
+      end
 
-    lines[0..(lines.size - 2)].each_with_index do |line_for_wire, index|
-      lines[index + 1..-1].each do |other_line_for_wire|
-        line_for_wire.each do |line|
-          other_line_for_wire.each do |line2|
-            intersect = line_intersection(line, line2)
-            intersections << intersect if intersect
+      intersections
+    end
+
+    def sorted_intersections(wire1, wire2)
+      intersections(wire1, wire2).sort do |a, b|
+        (a[0].abs + a[1].abs) <=> (b[0].abs + b[1].abs)
+      end
+    end
+
+    def hash_wire(wire)
+      current = [0, 0]
+      hash = {}
+
+      wire.each do |move|
+        direction = move[0]
+        amount = move[1..-1].to_i
+
+        if direction == 'R'
+          (current[0]..(current[0] + amount)).each do |point|
+            hash[[point, current[1]]] = move
+            current = [point, current[1]]
+          end
+        elsif direction == 'L'
+          (current[0].downto(current[0] - amount)).each do |point|
+            hash[[point, current[1]]] = move
+            current = [point, current[1]]
+          end
+        elsif direction == 'U'
+          (current[1]..(current[1] + amount)).each do |point|
+            hash[[current[0], point]] = move
+            current = [current[0], point]
+          end
+        else
+          (current[1].downto(current[1] - amount)).each do |point|
+            hash[[current[0], point]] = move
+            current = [current[0], point]
           end
         end
       end
-    end
 
-    intersections
-  end
-
-  def intersections_with_lines
-    intersections = []
-
-    lines[0..(lines.size - 2)].each_with_index do |line_for_wire, index|
-      lines[index + 1..-1].each do |other_line_for_wire|
-        line_for_wire.each do |line|
-          other_line_for_wire.each do |line2|
-            intersect = line_intersection(line, line2)
-            intersections += [[intersect, [line, line2]]] if intersect
-          end
-        end
-      end
-    end
-
-    intersections
-  end
-
-  def lines
-    @wires.map do |wire|
-      lines_for_wire = []
-
-      wire.each_with_index do |coordinate, index|
-        lines_for_wire << [coordinate, wire[index + 1]] if wire[index + 1]
-      end
-
-      lines_for_wire
-    end
-  end
-
-  def line_intersection(line1, line2)
-    if line1[0][0] == line1[1][0] && line2[0][1] == line2[1][1]
-      x = line1[0][0]
-      y = line2[1][1]
-
-      min_x = [line2[0][0], line2[1][0]].min
-      max_x = [line2[0][0], line2[1][0]].max
-      min_y = [line1[0][1], line1[1][1]].min
-      max_y = [line1[0][1], line1[1][1]].max
-
-      return [x, y] if min_x <= x && x <= max_x && min_y <= y && y <= max_y
-    elsif line2[0][0] == line2[0][1]
-      y = line1[0][1]
-      x = line2[1][0]
-
-      min_x = [line2[0][0], line2[1][0]].min
-      max_x = [line2[0][0], line2[1][0]].max
-      min_y = [line2[0][1], line2[1][1]].min
-      max_y = [line2[0][1], line2[1][1]].max
-
-      return [x, y] if min_x <= x && x <= max_x && min_y <= y && y <= max_y
-    end
-
-    nil
-  end
-
-  def closest_intersection
-    intersections
-  end
-
-  def sorted_intersections
-    intersections.sort do |a, b|
-      (a[0].abs + a[1].abs) <=> (b[0].abs + b[1].abs)
-    end
-  end
-
-  private
-
-  def parse_wires(wires)
-    @wires = wires.map { |wire| parse_wire(wire) }
-  end
-
-  def parse_wire(wire)
-    last = [0, 0]
-
-    wire.map do |move|
-      direction = move[0]
-      amount = move[1..-1].to_i
-
-      last = if direction == 'R'
-               [last[0] + amount, last[1]]
-             elsif direction == 'L'
-               [last[0] - amount, last[1]]
-             elsif direction == 'U'
-               [last[0], last[1] + amount]
-             else
-               [last[0], last[1] - amount]
-             end
+      hash
     end
   end
 end
 
-test = CrossedWires.new(WIRES)
+test = CrossedWires.sorted_intersections(*WIRES)
 
 require 'pry'
 binding.pry
