@@ -37,7 +37,7 @@ class CrossedWires
 
     def distance_to_intersection(intersection, wire_array)
       wire_array.each_with_index do |point, index|
-        return index if point == intersection
+        return index + 1 if point == intersection
       end
     end
 
@@ -119,6 +119,8 @@ end
 
 test = CrossedWires.sorted_intersections(*WIRES)
 test2 = CrossedWires.closest_intersection_distance(*WIRES)
+array1 = CrossedWires.array_wire(WIRES[0])
+array2 = CrossedWires.array_wire(WIRES[1])
 
 require 'pry'
 binding.pry
