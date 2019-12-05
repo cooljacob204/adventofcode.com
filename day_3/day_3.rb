@@ -8,9 +8,6 @@ class CrossedWires
       wire1_hash = hash_wire(wire1)
       wire2_hash = hash_wire(wire2)
 
-      require 'pry'
-      binding.pry
-
       wire2_hash.keys.each do |move|
         intersections << move if wire1_hash[move]
       end
