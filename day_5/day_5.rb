@@ -58,6 +58,56 @@ class Intcode
     index + 2
   end
 
+  def jump_true(index)
+    modes = get_modes(index)
+    num1 = get_value(index + 1, modes[2])
+    num2 = get_value(index + 2, modes[1])
+    return index + 3 if num1.zero?
+
+    num2
+  end
+
+  def jump_false(index)
+    modes = get_modes(index)
+    num1 = get_value(index + 1, modes[2])
+    num2 = get_value(index + 2, modes[1])
+    return index + 3 unless num1.zero?
+
+    num2
+  end
+
+  def less_then(index)
+    modes = get_modes(index)
+
+    num1 = get_value(index + 1, modes[2])
+    num2 = get_value(index + 2, modes[1])
+    writelocation = @integers[index + 3]
+
+    if num1 < num2
+      @integers[writelocation] = 1
+    else
+      @integers[writelocation] = 0
+    end
+
+    index + 4
+  end
+
+  def equals(index)
+    modes = get_modes(index)
+
+    num1 = get_value(index + 1, modes[2])
+    num2 = get_value(index + 2, modes[1])
+    writelocation = @integers[index + 3]
+
+    @integers[writelocation] = if num1 == num2
+                                 1
+                               else
+                                 0
+                               end
+
+    index + 4
+  end
+
   def hault(_)
     -1
   end
@@ -81,6 +131,10 @@ class Intcode
       2 => :multiple,
       3 => :input,
       4 => :output,
+      5 => :jump_true,
+      6 => :jump_false,
+      7 => :less_then,
+      8 => :equals,
       99 => :hault
     }
   end
