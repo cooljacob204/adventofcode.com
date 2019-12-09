@@ -83,11 +83,7 @@ class Intcode
     num2 = get_value(index + 2, modes[1])
     writelocation = @integers[index + 3]
 
-    if num1 < num2
-      @integers[writelocation] = 1
-    else
-      @integers[writelocation] = 0
-    end
+    @integers[writelocation] = num1 < num2 ? 1 : 0
 
     index + 4
   end
